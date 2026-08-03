@@ -1,0 +1,11 @@
+# QSPI Configuration
+clk_freq: 50000000
+vendor: xilinx #lattice
+module: W25Q128JV    # Common QSPI flash. Check supported modules if this fails.
+mode: x4             # x1, x2, x4
+rate: "1:1"      # 1:1, 1:2
+divisor: 2           # SPI clock divisor
+bus_standard: wishbone
+bus_endianness: little
+with_master: true    # Needed for writes/control
+sim: false           # Set to true to use LiteSPIPHYModel for simulation

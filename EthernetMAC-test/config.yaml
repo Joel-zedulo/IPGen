@@ -1,0 +1,6 @@
+core: wishbone
+device: max10
+vendor: xilinx
+clk_freq: 50000000
+phy: LiteEthPHYMII
+endianness: "little"
