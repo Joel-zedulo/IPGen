@@ -4,7 +4,6 @@ import os
 
 from migen import *
 from litex.build.generic_platform import *
-from litex.build.lattice.platform import LatticePlatform
 from litex.soc.integration.soc_core import *
 from litex.soc.integration.builder import *
 from litex.soc.interconnect import wishbone
@@ -59,10 +58,11 @@ class HyperBusSoC(SoCMini):
         self.comb += wb.connect_to_pads(self.platform.request("bus"), mode="slave")
         self.bus.add_master(master=wb)
 
+        # Added cached = True for efficient CPU instruction execution / burst reads
         self.bus.add_slave("hyperbus", self.hyperbus.bus, SoCRegion(
             origin = 0x10000000,
             size   = 0x10000000,
-            cached = False
+            cached = True
         ))
 
 def main():
@@ -74,12 +74,14 @@ def main():
 
     vendor = cfg.get("vendor", "lattice")
     device = cfg.get("device", "")
+    toolchain = cfg.get("toolchain", "diamond")
 
     if vendor == "lattice":
-        platform = LatticePlatform(device, io=[], toolchain="diamond")
+        from litex.build.lattice.platform import LatticePlatform
+        platform = LatticePlatform(device, io=[], toolchain=toolchain)
     elif vendor == "xilinx":
         from litex.build.xilinx.platform import XilinxPlatform
-        platform = XilinxPlatform(device, io=[], toolchain="vivado")
+        platform = XilinxPlatform(device, io=[], toolchain=toolchain)
     else:
         sys.exit(f"Unsupported vendor: {vendor}")
 
@@ -98,24 +100,13 @@ if __name__ == "__main__":
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 #import yaml
 #import sys
 #import os
 #
 #from migen import *
 #from litex.build.generic_platform import *
-#from litex.build.xilinx.platform import XilinxPlatform
+#from litex.build.lattice.platform import LatticePlatform
 #from litex.soc.integration.soc_core import *
 #from litex.soc.integration.builder import *
 #from litex.soc.interconnect import wishbone
@@ -170,7 +161,6 @@ if __name__ == "__main__":
 #        self.comb += wb.connect_to_pads(self.platform.request("bus"), mode="slave")
 #        self.bus.add_master(master=wb)
 #
-#        # Aligned to 256MB to avoid CSR collision at 0x0
 #        self.bus.add_slave("hyperbus", self.hyperbus.bus, SoCRegion(
 #            origin = 0x10000000,
 #            size   = 0x10000000,
@@ -184,15 +174,24 @@ if __name__ == "__main__":
 #    except FileNotFoundError:
 #        sys.exit("Error: config.yaml not found")
 #
-#    platform = XilinxPlatform(cfg.get("device", ""), io=[], toolchain="vivado")
+#    vendor = cfg.get("vendor", "lattice")
+#    device = cfg.get("device", "")
+#
+#    if vendor == "lattice":
+#        platform = LatticePlatform(device, io=[], toolchain="diamond")
+#    elif vendor == "xilinx":
+#        from litex.build.xilinx.platform import XilinxPlatform
+#        platform = XilinxPlatform(device, io=[], toolchain="vivado")
+#    else:
+#        sys.exit(f"Unsupported vendor: {vendor}")
+#
 #    platform.add_extension(_io)
 #
 #    soc = HyperBusSoC(platform, cfg)
 #
 #    builder = Builder(soc, output_dir="./build", compile_gateware=False, compile_software=False)
 #
-#    # Grab the name directly from the Makefile environment variable
-#    core_name = os.environ.get("CORE_NAME", "litehyperbus_core")
+#    core_name = os.environ.get("CORE_NAME", "hypermem_controller")
 #
 #    builder.build(build_name=core_name)
 #

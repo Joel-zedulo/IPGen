@@ -54,15 +54,17 @@ module OBUFT (
     assign O = T ? 1'bz : I;
 endmodule
 
-// D flip-flop with async preset and clock enable
-module FDPE (
-    input  D,     // Data input
-    input  C,     // Clock (positive edge)
-    input  CE,    // Clock enable (active high)
-    input  PRE,   // Async preset (active high)
-    output Q      // Registered output
+// D flip-flop with async preset, clock enable, and optional INIT parameter
+module FDPE #(
+    parameter INIT = 1'b0
+) (
+    input  D,    // Data input
+    input  C,    // Clock (positive edge)
+    input  CE,   // Clock enable (active high)
+    input  PRE,  // Async preset (active high)
+    output Q     // Registered output
 );
-    reg q_int;
+    reg q_int = INIT;
     always @(posedge C or posedge PRE)
         if (PRE)     q_int <= 1'b1;
         else if (CE) q_int <= D;
