@@ -35,6 +35,7 @@ make help             # List all available root targets
 ```
 
 ## Architecture
+```
 IPGen/
 ├── cores/
 │   ├── EthernetMAC-test/
@@ -44,5 +45,6 @@ IPGen/
 │   └── OSPI_Flash_Controller/
 ├── primitives/
 └── Makefile
+```
 
 All cores utilize standard Xilinx-targeted primitives natively resolved and verified during compilation checks via the shared `primitives/` library.
