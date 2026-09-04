@@ -1,0 +1,30 @@
+### Current State & Debugging Summary
+
+You are currently working on generating a LiteX-based IP core (`ospi_flash_controller`) using Python (`gen.py`) inside a virtual environment (`litex-venv`) at `~/code_H/Verilog/Projects/IPGen/cores/OSPI_Flash_Controller`.
+
+#### 1. What Works & What Is Installed
+
+* **Environment:** Python 3.12 virtual environment at `/home/jopoku/LiteX_install/litex-venv`.
+* **Dependencies:** `litex`, `migen`, `yaml`, and `litespi` (installed via git repository clone).
+* **Platform/IO setup:** `_io` configuration extensions, `SoCMini` initialization, clock/reset generation (`CRG`), and Wishbone bus attachments are fully structured.
+
+#### 2. The Current Blocking Error
+
+* **Last Error Traceback:** ```text
+File "/home/jopoku/LiteX_install/litex-venv/lib/python3.12/site-packages/litespi/core/master.py", line 79, in **init**
+tx_fifo.sink.valid.eq(self._rxtx.wr_stb),
+AttributeError: 'CSR' object has no attribute 'wr_stb'
+```
+
+```
+
+
+* **Root Cause:** A version incompatibility/API mismatch in the current upstream commit of `litespi` where `LiteSPIMaster` attempts to access `.wr_stb` on a LiteX Control/Status Register (`CSR`) object which no longer exists or has a modified attribute name in modern LiteX/LiteSPI releases.
+
+---
+
+### Action Plan for Tomorrow's Session
+
+When opening the new chat, paste this summary along with the following prompt to pick up instantly:
+
+> *"I am debugging a LiteX `litespi` generation error where `LiteSPIMaster` throws an `AttributeError: 'CSR' object has no attribute 'wr_stb'` on line 79 of `litespi/core/master.py`. Help me inspect or patch the local `litespi` package inside my venv (`/home/jopoku/LiteX_install/litex-venv`) or adjust the `LiteSPI` core instantiation to bypass or fix this `wr_stb` mismatch."*
