@@ -1,17 +1,17 @@
 # ==============================================================================
-# EthernetMAC-test Makefile
+# Generic LiteX Standalone IP Generator
 # ==============================================================================
 
 # --- IP Configuration ---
-GEN_TOOL  := liteeth_gen
-CONFIG    := config.yaml
-CORE_NAME := liteeth_core
+GEN_CMD   := python3 gen.py
+# CORE_NAME: Change this to whatever you want the .v file to be named
+CORE_NAME := hypermem_controller
 # ------------------------
 
 BUILD_DIR := ./build
 CORE_FILE := $(BUILD_DIR)/gateware/$(CORE_NAME).v
 
-.PHONY: all clean check_venv test
+.PHONY: all clean check_venv install_reqs test
 
 all: $(CORE_NAME)
 
@@ -25,25 +25,33 @@ check_venv:
 	fi
 	@echo "Venv active: $$VIRTUAL_ENV"
 
-# 2. Generation target
+# 2. Dependency injection: Install from requirements.txt if it exists
+install_reqs: check_venv
+	@if [ -f "requirements.txt" ]; then \
+		echo "Installing dependencies from requirements.txt..."; \
+		pip install -q --upgrade -r requirements.txt; \
+	else \
+		echo "No requirements.txt found, skipping dependency install."; \
+	fi
+
+# 3. Generation: Runs only AFTER dependencies are satisfied
 $(CORE_NAME): $(CORE_FILE)
 
-$(CORE_FILE): check_venv
+$(CORE_FILE): install_reqs
 	@echo "=================================================================="
-	@echo " Generating $(CORE_NAME) using $(GEN_TOOL)"
+	@echo " Generating $(CORE_NAME)"
 	@echo "=================================================================="
-	@command -v $(GEN_TOOL) >/dev/null 2>&1 || { echo "ERROR: '$(GEN_TOOL)' not found.\nPlease activate your LiteX venv first."; exit 1; }
-	$(GEN_TOOL) $(CONFIG) --no-compile --output-dir $(BUILD_DIR) --name $(CORE_NAME)
+	CORE_NAME=$(CORE_NAME) $(GEN_CMD)
 	@echo "=================================================================="
 	@echo "Success! Find your RTL at: $(CURDIR)/$(BUILD_DIR)/gateware/$(CORE_NAME).v"
 
-# 3. Simulation / Test target: Compiles core and primitives, checks compilation status
+# 4. Simulation / Test target: Compiles core and primitives, checks compilation status
 test: check_venv
 	@if [ ! -f "$(CORE_FILE)" ]; then \
 		echo "Core RTL not found. Triggering build first..."; \
 		$(MAKE) $(CORE_NAME); \
 	fi
-	@if iverilog -o sim_out -s $(CORE_NAME) $(CORE_FILE) ../primitives/*.v; then \
+	@if iverilog -o sim_out -s $(CORE_NAME) $(CORE_FILE) ../../primitives/*.v; then \
 		echo ""; \
 		echo "=================================================================="; \
 		echo "'$(CORE_NAME)' compilation SUCESSFUL!"; \

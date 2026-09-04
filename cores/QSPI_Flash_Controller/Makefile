@@ -51,7 +51,7 @@ test: check_venv
 		echo "Core RTL not found. Triggering build first..."; \
 		$(MAKE) $(CORE_NAME); \
 	fi
-	@if iverilog -o sim_out -s $(CORE_NAME) $(CORE_FILE) ../primitives/*.v; then \
+	@if iverilog -o sim_out -s $(CORE_NAME) $(CORE_FILE) ../../primitives/*.v; then \
 		echo ""; \
 		echo "=================================================================="; \
 		echo "'$(CORE_NAME)' compilation SUCESSFUL!"; \

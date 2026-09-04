@@ -1,0 +1,5 @@
+# --- HyperFlash Controller Configuration ---
+clk_freq: 50000000
+vendor: xilinx
+device: "xc7a35t"
+toolchain: "vivado"
