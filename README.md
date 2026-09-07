@@ -12,11 +12,12 @@ Standalone LiteX IP core generation for Wishbone-based SoC integration.
 | `HyperMem_Controller/` | LiteHyperMem Controller | Wishbone | HyperRAM DDR |
 
 ## Perequisites
-To install the litex framework used in core generation, see th official guide at: https://github.com/enjoy-digital/litex/wiki/Installation
+To install the litex framework used in core generation, see the official guide at: https://github.com/enjoy-digital/litex/wiki/Installation
 Install iverilog for the (post-gen) basic compile test & possible future simulation tests.
 bash```
 sudo apt install iverilog
 ```
+
 ## Usage
 
 Run commands from the **root** directory of the project:
