@@ -14,7 +14,7 @@ Standalone LiteX IP core generation for Wishbone-based SoC integration.
 ## Perequisites
 To install the litex framework used in core generation, see the official guide at: https://github.com/enjoy-digital/litex/wiki/Installation
 Install iverilog for the (post-gen) basic compile test & possible future simulation tests.
-bash```
+```bash
 sudo apt install iverilog
 ```
 
